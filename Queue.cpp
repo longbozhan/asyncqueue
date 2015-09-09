@@ -6,7 +6,7 @@ Queue::Queue(int cmd)
     mName += cmd;
 
     mCmd = cmd;
-    store.init(cmd);
+    store.init(mName, cmd);
     openFifo();
 }
 
@@ -63,11 +63,11 @@ void Queue::notify()
 
 bool wait(int timeout)
 {
-    int rc = select(_fifo + 1, &fs, 0, 0, (timeout >= 0 ? &tv : 0));
+    int rc = ::select(_fifo + 1, &fs, 0, 0, (timeout >= 0 ? &tv : 0));
     if (rc > 0)
     {
         char c[64];
-        int ret = read(mFifo, c, sizeof(c));
+        int ret = ::read(mFifo, c, sizeof(c));
         if (ret <= 0 && errno != EAGAIN)
             return true;
     }
